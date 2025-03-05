@@ -1,12 +1,11 @@
-import { LoginForm } from './modules/auth/login'
+import { Router } from "./app/routes";
 
 function App() {
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-svh">
-      <LoginForm />
-    </div>
-  )
+    <>
+      <Router />
+    </>
+  );
 }
 
-export default App
+export default App;
