@@ -10,6 +10,7 @@ export function Router() {
         <Route path="/login" element={<LoginPage />} />
 
         <Route element={<ProtectedRoutes />}>
+          <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
         </Route>
       </Routes>

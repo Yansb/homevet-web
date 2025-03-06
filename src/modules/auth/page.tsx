@@ -7,12 +7,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuthStore } from "@/store/authStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { login } from "../../services/authService";
 import { useNavigate } from "react-router";
+import { useStores } from "@/store";
 
 const formSchema = z.object({
   email: z.string({ message: "Email é obrigatório" }).email(),
@@ -22,7 +22,9 @@ const formSchema = z.object({
 });
 
 export function LoginPage() {
-  const { setUser } = useAuthStore();
+  const {
+    authStore: { setUser },
+  } = useStores();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
