@@ -1,3 +1,4 @@
+import { LoadingPage } from "@/app/loadingPage";
 import { useAuth } from "./AuthStore";
 import { createContext, useContext } from "react";
 
@@ -19,7 +20,7 @@ export function StoresProvider({ children }: { children: React.ReactNode }) {
   const authStore = useAuth();
 
   if (authStore.loading) {
-    return <div>Loading...</div>;
+    return <LoadingPage />;
   }
 
   return (
