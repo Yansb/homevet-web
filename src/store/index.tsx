@@ -1,10 +1,12 @@
 import { LoadingPage } from "@/app/loadingPage";
 import { useAuth } from "./AuthStore";
 import { createContext, useContext } from "react";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 interface Stores {
   authStore: ReturnType<typeof useAuth>;
 }
+const queryClient = new QueryClient();
 
 const storesCtx = createContext<Stores | null>(null);
 
@@ -24,6 +26,8 @@ export function StoresProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <storesCtx.Provider value={{ authStore }}>{children}</storesCtx.Provider>
+    <QueryClientProvider client={queryClient}>
+      <storesCtx.Provider value={{ authStore }}>{children}</storesCtx.Provider>
+    </QueryClientProvider>
   );
 }

@@ -1,5 +1,3 @@
-import { MyButton } from "@/components/MyButton";
-import { MyInput } from "@/components/MyInput";
 import {
   Form,
   FormControl,
@@ -13,6 +11,8 @@ import { z } from "zod";
 import { login } from "../../services/authService";
 import { useNavigate } from "react-router";
 import { useStores } from "@/store";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   email: z.string({ message: "Email é obrigatório" }).email(),
@@ -71,7 +71,7 @@ export function LoginPage() {
               render={({ field }) => (
                 <FormItem className="flex min-w-40 flex-1 flex-col">
                   <FormControl>
-                    <MyInput placeholder="Email" {...field} />
+                    <Input placeholder="Email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,7 +85,7 @@ export function LoginPage() {
               render={({ field }) => (
                 <FormItem className="flex min-w-40 flex-1 flex-col">
                   <FormControl>
-                    <MyInput type="password" placeholder="Senha" {...field} />
+                    <Input type="password" placeholder="Senha" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -93,16 +93,20 @@ export function LoginPage() {
             />
           </div>
           <p className="px-4 pt-1 pb-3 text-sm leading-normal font-normal text-neutral-500 underline">
-            Forgot password?
+            Esqueceu sua senha?
           </p>
           <div className="flex justify-center">
             <div className="flex max-w-[480px] flex-1 flex-col items-stretch gap-3 px-4 py-3">
-              <MyButton type="submit">
+              <Button type="submit">
                 <span className="truncate">Log in</span>
-              </MyButton>
-              <MyButton variant="ghost">
+              </Button>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => navigate("/cadastro")}
+              >
                 <span className="truncate">Novo usuario? cadastre-se</span>
-              </MyButton>
+              </Button>
             </div>
           </div>
         </form>
