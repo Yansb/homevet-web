@@ -20,7 +20,6 @@ const formSchema = z.object({
     .string({ message: "Senha é obrigatória" })
     .min(8, "Senha muito curta"),
 });
-
 export function LoginPage() {
   const {
     authStore: { setUser },

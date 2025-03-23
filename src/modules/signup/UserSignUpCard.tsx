@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
+import { phoneMask } from "@/helpers/masks";
+import { useMutation } from "@tanstack/react-query";
+import { CreateUserDTO, createUser } from "@/services/userService";
+import { toast } from "sonner";
 
 const signUpSchema = z.object({
   email: z.string({ message: "Email é obrigatório" }).email(),
@@ -35,18 +39,50 @@ const signUpSchema = z.object({
     state: z.string({ message: "Estado é obrigatório" }),
     zipCode: z.string({ message: "CEP é obrigatório" }),
     complement: z.string().optional(),
+    addressName: z.string().default("Casa"),
   }),
 });
 
+type SignUpFormData = z.infer<typeof signUpSchema>;
+
 export function UserSignUpCard() {
-  const navigator = useNavigate();
-  const form = useForm<z.infer<typeof signUpSchema>>({
+  const navigate = useNavigate();
+  const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
   });
 
-  async function onSubmit(data: z.infer<typeof signUpSchema>) {
-    console.log(data);
+  const createUserMutation = useMutation({
+    mutationFn: (data: CreateUserDTO) => createUser(data),
+    onSuccess: () => {
+      toast.success("Conta criada com sucesso!");
+      navigate("/login");
+    },
+    onError: (error) => {
+      toast.error("Erro ao criar conta. Tente novamente.");
+      console.error("Error creating user:", error);
+    },
+  });
+
+  async function onSubmit(data: SignUpFormData) {
+    const cleanedPhone = `+55${data.phone.replace(/\s()-/g, "")}`;
+    const userData: CreateUserDTO = {
+      email: data.email,
+      password: data.password,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phoneNumber: cleanedPhone,
+      address: {
+        ...data.address,
+        location: {
+          latitude: "-12.9948011",
+          longitude: "-38.4612307",
+        },
+      },
+    };
+
+    createUserMutation.mutate(userData);
   }
+
   return (
     <Card>
       <CardHeader>
@@ -100,7 +136,15 @@ export function UserSignUpCard() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Telefone" {...field} />
+                    <Input
+                      placeholder="Telefone"
+                      value={field.value}
+                      onChange={(e) => {
+                        const formatted = phoneMask(e.target.value);
+                        e.target.value = formatted;
+                        field.onChange(formatted);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -203,7 +247,7 @@ export function UserSignUpCard() {
             <Button
               variant="outline"
               type="button"
-              onClick={() => navigator("/login")}
+              onClick={() => navigate("/login")}
             >
               Voltar
             </Button>

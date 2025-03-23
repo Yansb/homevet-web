@@ -1,9 +1,9 @@
-import { AuthenticatedLayout } from "@/components/AuthenticatedLayout";
-import { ProtectedRoutes } from "@/components/utils/ProtectedRoutes";
+import { ProtectedRoutes } from "@/router/ProtectedRoutes";
 import { LoginPage } from "@/modules/auth/page";
 import { HomePage } from "@/modules/home/page";
 import { SignUpPage } from "@/modules/signup/page";
 import { BrowserRouter, Route, Routes } from "react-router";
+import { AuthenticatedLayout } from "@/components/layouts/AuthenticatedLayout";
 
 export function Router() {
   return (

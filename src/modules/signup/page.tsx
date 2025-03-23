@@ -1,7 +1,7 @@
 import { TabsList, Tabs, TabsContent } from "@/components/ui/tabs";
 
 import { TabsTrigger } from "@radix-ui/react-tabs";
-import { UserSignUpCard } from "./userSingupCard";
+import { UserSignUpCard } from "./UserSignUpCard";
 
 const TabsValues = {
   user: "user",

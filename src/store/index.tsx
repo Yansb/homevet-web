@@ -1,4 +1,4 @@
-import { LoadingPage } from "@/app/loadingPage";
+import { LoadingPage } from "@/app/LoadingPage";
 import { useAuth } from "./AuthStore";
 import { createContext, useContext } from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";

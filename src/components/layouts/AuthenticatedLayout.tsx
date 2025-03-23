@@ -1,6 +1,6 @@
 import React from "react";
 import { isMobile } from "react-device-detect";
-import { Footer } from "./Footer";
+import { Footer } from "../Footer";
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
