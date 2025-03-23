@@ -19,15 +19,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router";
-import { phoneMask } from "@/helpers/masks";
-import { useMutation } from "@tanstack/react-query";
-import { CreateUserDTO, createUser } from "@/services/userService";
-import { toast } from "sonner";
+import { cepMask, phoneMask } from "@/helpers/masks";
+import { CreateUserDTO } from "@/store/services/userService";
+import { useStores } from "@/store";
+import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const signUpSchema = z.object({
-  email: z.string({ message: "Email é obrigatório" }).email(),
+  email: z
+    .string({ message: "Email é obrigatório" })
+    .email({ message: "Email invalido" }),
   password: z
     .string({ message: "Senha é obrigatória" })
+    .min(8, "Senha muito curta"),
+  passwordConfirm: z
+    .string({ message: "Por favor confirme a senha" })
     .min(8, "Senha muito curta"),
   firstName: z.string({ message: "Nome é obrigatório" }),
   lastName: z.string({ message: "Sobrenome é obrigatório" }),
@@ -40,28 +46,49 @@ const signUpSchema = z.object({
     zipCode: z.string({ message: "CEP é obrigatório" }),
     complement: z.string().optional(),
     addressName: z.string().default("Casa"),
+    location: z
+      .object({
+        latitude: z.string(),
+        longitude: z.string(),
+      })
+      .optional(),
   }),
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export function UserSignUpCard() {
+  const {
+    userStore: { createUserMutation },
+    locationStore: { useGetLocationByCepQuery },
+  } = useStores();
+
+  const [isLocationSet, setIsLocationSet] = useState(false);
+
   const navigate = useNavigate();
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
   });
 
-  const createUserMutation = useMutation({
-    mutationFn: (data: CreateUserDTO) => createUser(data),
-    onSuccess: () => {
-      toast.success("Conta criada com sucesso!");
-      navigate("/login");
-    },
-    onError: (error) => {
-      toast.error("Erro ao criar conta. Tente novamente.");
-      console.error("Error creating user:", error);
-    },
-  });
+  const cep = form.watch("address.zipCode");
+  const debouncedCep = useDebounce(cep?.replace(/\D/g, "") || "", 500);
+
+  const { data: locationData } = useGetLocationByCepQuery(debouncedCep);
+
+  useEffect(() => {
+    if (locationData) {
+      form.setValue("address.street", locationData.street || "");
+      form.setValue("address.city", locationData.city);
+      form.setValue("address.state", locationData.state);
+      if (locationData.location?.coordinates) {
+        form.setValue("address.location", {
+          latitude: locationData.location.coordinates.latitude || "",
+          longitude: locationData.location.coordinates.longitude || "",
+        });
+      }
+      setIsLocationSet(true);
+    }
+  }, [locationData]);
 
   async function onSubmit(data: SignUpFormData) {
     const cleanedPhone = `+55${data.phone.replace(/\s()-/g, "")}`;
@@ -71,16 +98,12 @@ export function UserSignUpCard() {
       firstName: data.firstName,
       lastName: data.lastName,
       phoneNumber: cleanedPhone,
-      address: {
-        ...data.address,
-        location: {
-          latitude: "-12.9948011",
-          longitude: "-38.4612307",
-        },
-      },
+      address: data.address,
     };
 
-    createUserMutation.mutate(userData);
+    createUserMutation.mutate(userData, {
+      onSuccess: () => navigate("/login"),
+    });
   }
 
   return (
@@ -150,25 +173,51 @@ export function UserSignUpCard() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input type="password" placeholder="Senha" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input type="password" placeholder="Senha" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="passwordConfirm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirmação de senha"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="address.zipCode"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="CEP" {...field} />
+                    <Input
+                      placeholder="CEP"
+                      {...field}
+                      onChange={(e) => {
+                        const formatted = cepMask(e.target.value);
+                        e.target.value = formatted;
+                        field.onChange(formatted);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,7 +230,11 @@ export function UserSignUpCard() {
                 render={({ field }) => (
                   <FormItem className="flex-grow">
                     <FormControl>
-                      <Input placeholder="Rua" {...field} />
+                      <Input
+                        placeholder="Rua"
+                        {...field}
+                        disabled={isLocationSet}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -211,7 +264,11 @@ export function UserSignUpCard() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Cidade" {...field} />
+                      <Input
+                        placeholder="Cidade"
+                        {...field}
+                        disabled={isLocationSet}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -223,7 +280,11 @@ export function UserSignUpCard() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input placeholder="Estado" {...field} />
+                      <Input
+                        placeholder="Estado"
+                        {...field}
+                        disabled={isLocationSet}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

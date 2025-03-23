@@ -1,5 +1,5 @@
 import Lottie from "lottie-react";
-import dogLoading from "../assets/animations/dog_loading.json";
+import dogLoading from "../../assets/animations/dog_loading.json";
 export function LoadingPage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">

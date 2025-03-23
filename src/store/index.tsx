@@ -1,13 +1,17 @@
-import { LoadingPage } from "@/app/LoadingPage";
+import { LoadingPage } from "@/components/layouts/LoadingPage";
 import { useAuth } from "./AuthStore";
 import { createContext, useContext } from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { useUsers } from "./UserStore";
+import { useLocation } from "./LocationStore";
 
 interface Stores {
   authStore: ReturnType<typeof useAuth>;
+  userStore: ReturnType<typeof useUsers>;
+  locationStore: ReturnType<typeof useLocation>;
 }
-const queryClient = new QueryClient();
 
+const queryClient = new QueryClient();
 const storesCtx = createContext<Stores | null>(null);
 
 export function useStores(): Stores {
@@ -18,16 +22,26 @@ export function useStores(): Stores {
   return context;
 }
 
-export function StoresProvider({ children }: { children: React.ReactNode }) {
+function StoresProviderContent({ children }: { children: React.ReactNode }) {
   const authStore = useAuth();
+  const userStore = useUsers();
+  const locationStore = useLocation();
 
   if (authStore.loading) {
     return <LoadingPage />;
   }
 
   return (
+    <storesCtx.Provider value={{ authStore, userStore, locationStore }}>
+      {children}
+    </storesCtx.Provider>
+  );
+}
+
+export function StoresProvider({ children }: { children: React.ReactNode }) {
+  return (
     <QueryClientProvider client={queryClient}>
-      <storesCtx.Provider value={{ authStore }}>{children}</storesCtx.Provider>
+      <StoresProviderContent>{children}</StoresProviderContent>
     </QueryClientProvider>
   );
 }

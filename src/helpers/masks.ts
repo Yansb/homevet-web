@@ -14,3 +14,11 @@ export const phoneMask = (value: string | undefined) => {
     .replace(/(\d{5})(\d)/, "$1-$2")
     .replace(/(-\d{4})(\d+?)/, "$1");
 };
+
+export const cepMask = (value: string | undefined) => {
+  if (!value) return "";
+
+  const cleanedValue = value.replace(/[\D]/g, "");
+
+  return cleanedValue.replace(/(\d{5})(\d)/, "$1-$2");
+};

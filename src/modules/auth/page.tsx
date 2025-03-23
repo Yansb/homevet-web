@@ -8,7 +8,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { login } from "../../services/authService";
+import { login } from "../../store/services/authService";
 import { useNavigate } from "react-router";
 import { useStores } from "@/store";
 import { Input } from "@/components/ui/input";
@@ -104,7 +104,7 @@ export function LoginPage() {
                 type="button"
                 onClick={() => navigate("/cadastro")}
               >
-                <span className="truncate">Novo usuario? cadastre-se</span>
+                <span className="truncate">Novo usuário? cadastre-se</span>
               </Button>
             </div>
           </div>
