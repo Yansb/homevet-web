@@ -1,6 +1,5 @@
-import { TabsList, Tabs, TabsContent } from "@/components/ui/tabs";
+import { TabsList, Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 
-import { TabsTrigger } from "@radix-ui/react-tabs";
 import { UserSignUpCard } from "./UserSignUpCard";
 
 const TabsValues = {
@@ -18,6 +17,11 @@ export function SignUpPage() {
         </TabsList>
         <TabsContent value={TabsValues.user}>
           <UserSignUpCard />
+        </TabsContent>
+        <TabsContent value={TabsValues.vet}>
+          <div>
+            <h2>oi</h2>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

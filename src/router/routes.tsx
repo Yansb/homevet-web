@@ -4,6 +4,8 @@ import { HomePage } from "@/modules/home/page";
 import { SignUpPage } from "@/modules/signup/page";
 import { BrowserRouter, Route, Routes } from "react-router";
 import { AuthenticatedLayout } from "@/components/layouts/AuthenticatedLayout";
+import { ProfilePage } from "@/modules/profile/page";
+import { AppointmentsPage } from "@/modules/appointments/page";
 
 export function Router() {
   return (
@@ -21,6 +23,8 @@ export function Router() {
         >
           <Route path="/" element={<HomePage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/perfil" element={<ProfilePage />} />
+          <Route path="/agendamentos" element={<AppointmentsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
