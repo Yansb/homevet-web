@@ -4,11 +4,13 @@ import { createContext, useContext } from "react";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useUsers } from "./UserStore";
 import { useLocation } from "./LocationStore";
+import { useDoctors } from "./DoctorStore";
 
 interface Stores {
   authStore: ReturnType<typeof useAuth>;
   userStore: ReturnType<typeof useUsers>;
   locationStore: ReturnType<typeof useLocation>;
+  doctorStore: ReturnType<typeof useDoctors>;
 }
 
 const queryClient = new QueryClient();
@@ -26,13 +28,16 @@ function StoresProviderContent({ children }: { children: React.ReactNode }) {
   const authStore = useAuth();
   const userStore = useUsers();
   const locationStore = useLocation();
+  const doctorStore = useDoctors();
 
   if (authStore.loading) {
     return <LoadingPage />;
   }
 
   return (
-    <storesCtx.Provider value={{ authStore, userStore, locationStore }}>
+    <storesCtx.Provider
+      value={{ authStore, userStore, locationStore, doctorStore }}
+    >
       {children}
     </storesCtx.Provider>
   );

@@ -1,6 +1,7 @@
 import { TabsList, Tabs, TabsContent, TabsTrigger } from "@/components/ui/tabs";
 
 import { UserSignUpCard } from "./UserSignUpCard";
+import { DoctorSignUpCard } from "./DoctorSignUpCard";
 
 const TabsValues = {
   user: "user",
@@ -19,9 +20,7 @@ export function SignUpPage() {
           <UserSignUpCard />
         </TabsContent>
         <TabsContent value={TabsValues.vet}>
-          <div>
-            <h2>oi</h2>
-          </div>
+          <DoctorSignUpCard />
         </TabsContent>
       </Tabs>
     </div>

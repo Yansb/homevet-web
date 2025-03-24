@@ -27,5 +27,10 @@ export function useAuth() {
     };
   }, []);
 
-  return { user, loading, setUser, setLoading, loginUserMutation };
+  const logout = async () => {
+    await auth.signOut();
+    setUser(null);
+  };
+
+  return { user, loading, setUser, setLoading, loginUserMutation, logout };
 }

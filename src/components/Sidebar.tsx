@@ -12,10 +12,8 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "./ui/sidebar";
-import { useStores } from "@/store";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
 import { Link } from "react-router";
+import { SidebarDropdownMenu } from "./SidebarMenu";
 
 const items = [
   {
@@ -41,10 +39,6 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const {
-    authStore: { user },
-  } = useStores();
-
   return (
     <Sidebar variant="sidebar">
       <SidebarHeader>
@@ -72,13 +66,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <div className="flex items-center space-x-2">
-          <Avatar>
-            <AvatarImage src={user?.photoURL ?? ""} />
-            <AvatarFallback>{user?.displayName?.at(0) ?? "D"}</AvatarFallback>
-          </Avatar>
-          <span>{user?.displayName}</span>
-        </div>
+        <SidebarDropdownMenu />
       </SidebarFooter>
     </Sidebar>
   );
